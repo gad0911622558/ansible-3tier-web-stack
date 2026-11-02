@@ -1,0 +1,26 @@
+---
+- name: apply common configuration to all servers 
+  hosts: all_servers 
+  become: true
+  vars_files:
+     - secrets.yml 
+  roles:
+    - common
+- name: configure web server
+  hosts: webservers 
+  become: true
+  roles:
+    - webserver
+- name: configure app server (reverse proxy)
+  hosts: appservers
+  become: true
+  roles: 
+    - appserver
+
+- name: configure database server
+  hosts: dbservers
+  become: true
+  vars_files:
+    - secrets.yml
+  roles: 
+    - databse

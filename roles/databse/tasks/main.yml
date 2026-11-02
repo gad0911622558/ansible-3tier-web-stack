@@ -1,0 +1,43 @@
+---
+# tasks file for roles/databse
+ - name: install mariadb server
+   dnf: 
+     name: mariadb-server
+     state: present
+
+ - name: install pythno mysql libarary (need for ansible module)
+   dnf: 
+     name: python3-PyMySQL
+     state: present
+
+ - name: start and enable mariadb
+   service:
+     name: mariadb
+     state: started
+     enabled: true
+
+ - name: open mysql port in firewall only for app server
+   firewalld: 
+     rich_rule: 'rule family="ipv4" source address="192.168.0.125" port port="33036" protocol="tcp" accept'
+     permanent: true
+     state: enabled
+     immediate: true
+
+ - name: create a database named "webapp_db"
+   mysql_db: 
+     name: webapp_db
+     state: present
+     login_user: root
+     login_password: ""
+     login_unix_socket: /var/lib/mysql/mysql.sock 
+
+ - name: create database user and grant privileges 
+   mysql_user:
+      name: webapp_user
+      password: "{{ db_password }}"
+      priv: 'webapp_db.*:ALL'
+      host: '192.168.0.125'
+      state: present
+      login_user: root
+      login_password: ""
+      login_unix_socket: /var/lib/mysql/mysql.sock

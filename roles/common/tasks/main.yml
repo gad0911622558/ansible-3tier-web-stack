@@ -1,0 +1,27 @@
+---
+# tasks file for roles/common
+ - name: install common packages
+   dnf:
+     name:
+       - vim
+       - wget
+       - chrony
+       - firewalld
+     state: present 
+
+ - name: start and enable firewalld
+   service:
+     name: firewalld
+     state: started 
+     enabled: true 
+
+ - name: start and enable chronyd 
+   service:
+      name: chronyd
+      state: started
+      enabled: true 
+
+ - name: ensure selinux is enforing 
+   selinux: 
+     policy: targeted 
+     state: enforcing  
